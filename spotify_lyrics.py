@@ -4,6 +4,7 @@ import sys
 import re
 import os
 import urllib.request
+import json
 
 import spotipy
 import spotipy.util as util
@@ -14,6 +15,7 @@ from bs4 import BeautifulSoup
 os.environ["SPOTIPY_CLIENT_ID"] = "e43b96ffdef54e2a8f6aab6b0baa5483"
 os.environ["SPOTIPY_CLIENT_SECRET"] = "61c58e9e13174cd58a7f27e7d50e4f4c"
 
+'''
 birdy_uri = 'spotify:artist:2WX2uTcsvV5OnS0inACecP'
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
 
@@ -26,12 +28,14 @@ while results['next']:
 for album in albums:
     print(album['name'])
 print("\n\n\n\n")
+'''
 
 
 username = "alonzoa-us"
 client_id = "e43b96ffdef54e2a8f6aab6b0baa5483"
 client_secret = "61c58e9e13174cd58a7f27e7d50e4f4c"
 redirect_uri = "http://127.0.0.1/callback"
+
 
 scope = 'user-read-currently-playing'
 # scope = 'user-read-playback-state'
@@ -40,9 +44,11 @@ scope = 'user-read-currently-playing'
 token = util.prompt_for_user_token(username, scope, client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
 
 spotify = spotipy.Spotify(auth=token)
-current_track = spotify.current_user_playing_track()
+current_track_dict = spotify.current_user_playing_track()
 
-print(current_track)
+current_track_name = current_track_dict['item']['name']
+current_artist = current_track_dict['item']['artists'][0]['name']
+
 
 def get_lyrics(artist,song_title):
     artist = artist.lower()
@@ -63,9 +69,9 @@ def get_lyrics(artist,song_title):
         down_partition = '<!-- MxM banner -->'
         lyrics = lyrics.split(up_partition)[1]
         lyrics = lyrics.split(down_partition)[0]
-        lyrics = lyrics.replace('<br>','').replace('</br>','').replace('</div>','').strip()
+        lyrics = lyrics.replace('<br>','').replace('</br>','').replace('<br/>', '').replace('</div>','').strip()
         return lyrics
     except Exception as e:
         return "Exception occurred \n" +str(e)
 
-print("Hello World")
+print(get_lyrics(current_artist, current_track_name))
