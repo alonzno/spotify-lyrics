@@ -136,7 +136,7 @@ def get_token():
 	cache_f = None
 
 	try:
-		cred_f = open('credentials.json')
+		cred_f = open(os.path.dirname(__file__) + '/credentials.json')
 		credentials = json.loads(cred_f.read())
 		username = credentials['username']
 		client_id = credentials['id']
@@ -145,7 +145,7 @@ def get_token():
 		scope = 'user-read-currently-playing'
 
 		try:
-			cache_f = open('.cache-alonzoa-us')
+			cache_f = open(os.path.dirname(__file__) + '/.cache-alonzoa-us')
 			data = json.loads(cache_f.read())
 			if (data['expires_at'] > int(time.time())):
 				return util.prompt_for_user_token(username, scope, client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
@@ -175,19 +175,22 @@ def get_token():
 '''
 
 #TODO add args
+try:
+    token = get_token()
 
-token = get_token()
+    spotify = spotipy.Spotify(auth=token)
+    current_track_dict = spotify.current_user_playing_track()
+    current_track_name = current_track_dict['item']['name']
+    current_artist = current_track_dict['item']['artists'][0]['name']
 
-spotify = spotipy.Spotify(auth=token)
-current_track_dict = spotify.current_user_playing_track()
-current_track_name = current_track_dict['item']['name']
-current_artist = current_track_dict['item']['artists'][0]['name']
+    header = current_track_name + ' by ' + current_artist
+    print('-'*len(header))
+    print(header)
+    print('-'*len(header)+'\n')
+    print(get_lyrics(current_artist, current_track_name))
+except TypeError:
+    print("You might not be listening to music right now, bluh")
 
-header = current_track_name + ' by ' + current_artist
-print('-'*len(header))
-print(header)
-print('-'*len(header)+'\n')
-print(get_lyrics(current_artist, current_track_name))
 '''
 	END Main Method
 '''
