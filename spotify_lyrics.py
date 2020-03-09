@@ -126,7 +126,12 @@ def get_lyrics(artist,song_title):
         down_partition = '<!-- MxM banner -->'
         lyrics = lyrics.split(up_partition)[1]
         lyrics = lyrics.split(down_partition)[0]
-        lyrics = lyrics.replace('<br>','').replace('</br>','').replace('<br/>', '').replace('</div>','').strip()
+        lyrics = lyrics.replace('<br>','') \
+            .replace('</br>','') \
+            .replace('<br/>', '') \
+            .replace('<i>', '') \
+            .replace('</i>', '') \
+            .replace('</div>','').strip()
         return lyrics
     except Exception as e:
         return "Woops, can't find that one.\n" +str(e)
