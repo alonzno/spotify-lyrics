@@ -134,7 +134,8 @@ def get_az_lyrics(artist,song_title):
 			.replace('</div>','').strip()
 		return lyrics
 	except Exception as e:
-		return "AZ Lyrics failed.\n" +str(e) + "\n"
+		print("AZ Lyrics failed.\n" +str(e) + "\n")
+		raise
 
 def get_musixmatch_lyrics(artist, song_title):
 	# Possibly transform inputs in other ways TODO
@@ -170,7 +171,8 @@ def get_musixmatch_lyrics(artist, song_title):
 		# 	.replace('</div>','').strip()
 		return lyrics
 	except Exception as e:
-		return "Musixmatch failed.\n" +str(e) + "\n"
+		print("Musixmatch failed.\n" +str(e) + "\n")
+		raise
 
 def get_token():
 	cred_f = None
