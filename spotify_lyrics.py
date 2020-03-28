@@ -107,7 +107,7 @@ def prompt_for_user_token_mod(
 	else:
 		return None
 
-def get_lyrics(artist,song_title):
+def get_az_lyrics(artist,song_title):
 	artist = artist.lower()
 	song_title = song_title.lower()
 	# remove all except alphanumeric characters from artist and song_title
@@ -134,7 +134,43 @@ def get_lyrics(artist,song_title):
 			.replace('</div>','').strip()
 		return lyrics
 	except Exception as e:
-		return "Woops, can't find that one.\n" +str(e)
+		return "AZ Lyrics failed.\n" +str(e) + "\n"
+
+def get_musixmatch_lyrics(artist, song_title):
+	# Possibly transform inputs in other ways TODO
+	artist = "-".join(artist.split())
+	song_title = "-".join(song_title.split())
+
+	url = "https://www.musixmatch.com/lyrics/%s/%s" % (artist, song_title)
+	headers = {'User-Agent': 'Safari/537.3'}
+	req = urllib.request.Request(url=url, headers=headers) 
+
+	#print(url)
+	try:
+		content = urllib.request.urlopen(req).read()
+		soup = BeautifulSoup(content, 'html.parser')
+
+		tags = soup.find_all('p', class_='mxm-lyrics__content')
+
+		lyrics = ""
+		for tag in tags:
+			lyrics += tag.text
+
+		# lyrics = str(soup)
+		# # lyrics lies between up_partition and down_partition
+		# up_partition = '<!-- Usage of azlyrics.com content by any third-party lyrics provider is prohibited by our licensing agreement. Sorry about that. -->'
+		# down_partition = '<!-- MxM banner -->'
+		# lyrics = lyrics.split(up_partition)[1]
+		# lyrics = lyrics.split(down_partition)[0]
+		# lyrics = lyrics.replace('<br>','') \
+		# 	.replace('</br>','') \
+		# 	.replace('<br/>', '') \
+		# 	.replace('<i>', '') \
+		# 	.replace('</i>', '') \
+		# 	.replace('</div>','').strip()
+		return lyrics
+	except Exception as e:
+		return "Musixmatch failed.\n" +str(e) + "\n"
 
 def get_token():
 	cred_f = None
@@ -204,7 +240,20 @@ try:
 	print('-'*len(header))
 	print(header)
 	print('-'*len(header)+'\n')
-	print(get_lyrics(current_artist, current_track_name))
+
+	try:
+		try:
+			print(get_az_lyrics(current_artist, current_track_name))
+			exit()
+		except Exception as e0:
+			pass
+		try:
+			print(get_musixmatch_lyrics(current_artist, current_track_name))
+			exit()
+		except Exception as e1:
+			raise
+	except Exception as final:
+		print("All fall backs failed")
 except TypeError as e:
 	print(e)
 	print("You might not be listening to music right now, bluh")
