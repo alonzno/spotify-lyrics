@@ -179,14 +179,14 @@ def get_token():
 	cache_f = None
 
 	try:
-		cred_f = open(os.path.dirname(__file__) + '/credentials.json')
+		cred_f = open(os.path.dirname(os.path.abspath(__file__)) + '/credentials.json')
 		credentials = json.loads(cred_f.read())
 		username = credentials['username']
 		client_id = credentials['id']
 		client_secret = credentials['secret']
 		redirect_uri = credentials['redirect']
 		scope = 'user-read-currently-playing'
-		cache_path = os.path.dirname(__file__) + '/.cache-alonzoa-us'
+		cache_path = os.path.dirname(os.path.abspath(__file__)) + '/.cache-alonzoa-us'
 		
 
 		try:
