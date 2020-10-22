@@ -157,18 +157,6 @@ def get_musixmatch_lyrics(artist, song_title):
         for tag in tags:
             lyrics += tag.text
 
-        """lyrics = str(soup)
-        # # lyrics lies between up_partition and down_partition
-        up_partition = '<!-- Usage of azlyrics.com content by any third-party lyrics provider is prohibited by our licensing agreement. Sorry about that. -->'
-        down_partition = '<!-- MxM banner -->'
-        lyrics = lyrics.split(up_partition)[1]
-        lyrics = lyrics.split(down_partition)[0]
-        lyrics = lyrics.replace('<br>','') \
-            .replace('</br>','') \
-            .replace('<br/>', '') \
-            .replace('<i>', '') \
-            .replace('</i>', '') \
-            .replace('</div>','').strip()"""
         return lyrics
     except Exception as e:
         print("Musixmatch failed.\n" +str(e) + "\n")
@@ -255,7 +243,7 @@ try:
         except Exception as e1:
             raise
     except Exception as final:
-        print("All fall backs failed")
+        print("Mission failed. We'll get 'em next time.'")
 except TypeError as e:
     print(e)
     print("You might not be listening to music right now, bluh")
