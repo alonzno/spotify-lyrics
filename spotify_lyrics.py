@@ -162,6 +162,28 @@ def get_musixmatch_lyrics(artist, song_title):
         print("Musixmatch failed.\n" +str(e) + "\n")
         raise
 
+def get_genius_lyrics(artist, song_title):
+    artist = "-".join(artist.lower().split()).capitalize()
+    song_title = "-".join(song_title.lower().split())
+
+    url =  "https://www.genius.com/" + artist + "-" + song_title + "-" + "lyrics"
+    req = urllib.request.Request(url, headers={'User-Agent': 'Chrome/83.0.4103.97'})
+
+    try:
+        content = urllib.request.urlopen(req).read()
+        soup = BeautifulSoup(content, 'html.parser')
+
+        tags = soup.find_all('div', class_='song_body-lyrics')
+
+        lyrics = ""
+        for tag in tags:
+            lyrics += tag.text
+
+        return lyrics
+    except Exception as e:
+        print("Genius failed.\n" +str(e) + "\n")
+        raise
+
 def get_token():
     cred_f = None
     cache_f = None
@@ -241,9 +263,14 @@ try:
             print(get_musixmatch_lyrics(current_artist, current_track_name))
             exit()
         except Exception as e1:
+            pass
+        try:
+            print(get_genius_lyrics(current_artist, current_track_name))
+            exit()
+        except Exception as e2:
             raise
     except Exception as final:
-        print("Mission failed. We'll get 'em next time.'")
+        print("Mission failed. We'll get 'em next time.")
 except TypeError as e:
     print(e)
     print("You might not be listening to music right now, bluh")
