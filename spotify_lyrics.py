@@ -173,7 +173,7 @@ def get_genius_lyrics(artist, song_title):
         content = urllib.request.urlopen(req).read()
         soup = BeautifulSoup(content, 'html.parser')
 
-        tags = soup.find_all('div', class_='song_body-lyrics')
+        tags = soup.find_all('div', class_='lyrics')
 
         lyrics = ""
         for tag in tags:
