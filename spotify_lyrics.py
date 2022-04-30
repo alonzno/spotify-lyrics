@@ -14,15 +14,19 @@ from bs4 import BeautifulSoup
 '''
     BEGIN Class Declarations
 '''
+
+
 class OAuthRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         request_path = self.path
         self.server.url = request_path
 
+
 class OAuthHTTPServer:
     def __init__(self, addr):
         self.server = HTTPServer(addr, OAuthRequestHandler)
         self.server.url = None
+
 
 '''
     END Class Declarations
@@ -31,6 +35,8 @@ class OAuthHTTPServer:
 '''
     BEGIN Function Declarations
 '''
+
+
 def prompt_for_user_token_mod(
     username,
     scope=None,
@@ -92,7 +98,6 @@ def prompt_for_user_token_mod(
         webbrowser.open(sp_oauth.get_authorize_url())
         httpd.server.handle_request()
 
-
         if httpd.server.url:
             url = httpd.server.url
 
@@ -106,6 +111,7 @@ def prompt_for_user_token_mod(
         return token
     else:
         return None
+
 
 def get_az_lyrics(artist,song_title):
     artist = artist.lower()
@@ -121,21 +127,22 @@ def get_az_lyrics(artist,song_title):
         content = urllib.request.urlopen(url).read()
         soup = BeautifulSoup(content, 'html.parser')
         lyrics = str(soup)
-        # lyrics lies between up_partition and down_partition
+        # lyrics lie between up_partition and down_partition
         up_partition = '<!-- Usage of azlyrics.com content by any third-party lyrics provider is prohibited by our licensing agreement. Sorry about that. -->'
         down_partition = '<!-- MxM banner -->'
         lyrics = lyrics.split(up_partition)[1]
         lyrics = lyrics.split(down_partition)[0]
-        lyrics = lyrics.replace('<br>','') \
-            .replace('</br>','') \
+        lyrics = lyrics.replace('<br>', '') \
+            .replace('</br>', '') \
             .replace('<br/>', '') \
             .replace('<i>', '') \
             .replace('</i>', '') \
-            .replace('</div>','').strip()
+            .replace('</div>', '').strip()
         return lyrics
     except Exception as e:
-        print("AZ Lyrics failed.\n" +str(e) + "\n")
+        print("AZ Lyrics failed.\n" + str(e) + "\n")
         raise
+
 
 def get_musixmatch_lyrics(artist, song_title):
     # Possibly transform inputs in other ways TODO
@@ -146,7 +153,7 @@ def get_musixmatch_lyrics(artist, song_title):
     headers = {'User-Agent': 'Safari/537.3'}
     req = urllib.request.Request(url=url, headers=headers)
 
-    #print(url)
+    # print(url)
     try:
         content = urllib.request.urlopen(req).read()
         soup = BeautifulSoup(content, 'html.parser')
@@ -159,14 +166,15 @@ def get_musixmatch_lyrics(artist, song_title):
 
         return lyrics
     except Exception as e:
-        print("Musixmatch failed.\n" +str(e) + "\n")
+        print("Musixmatch failed.\n" + str(e) + "\n")
         raise
+
 
 def get_genius_lyrics(artist, song_title):
     artist = "-".join(artist.lower().split()).capitalize()
     song_title = "-".join(song_title.lower().split())
 
-    url =  "https://www.genius.com/" + artist + "-" + song_title + "-" + "lyrics"
+    url = "https://www.genius.com/" + artist + "-" + song_title + "-" + "lyrics"
     req = urllib.request.Request(url, headers={'User-Agent': 'Chrome/83.0.4103.97'})
 
     try:
@@ -181,8 +189,9 @@ def get_genius_lyrics(artist, song_title):
 
         return lyrics
     except Exception as e:
-        print("Genius failed.\n" +str(e) + "\n")
+        print("Genius failed.\n" + str(e) + "\n")
         raise
+
 
 def get_token():
     cred_f = None
@@ -198,11 +207,10 @@ def get_token():
         scope = 'user-read-currently-playing'
         cache_path = os.path.dirname(os.path.abspath(__file__)) + '/.cache-alonzoa-us'
 
-
         try:
             cache_f = open(cache_path)
             data = json.loads(cache_f.read())
-            if (data['expires_at'] > int(time.time())):
+            if data['expires_at'] > int(time.time()):
                 return util.prompt_for_user_token(username,
                                                   scope,
                                                   client_id=client_id,
@@ -212,7 +220,7 @@ def get_token():
             else:
                 raise IOError
         except IOError:
-            #TODO ADD server intercept req
+            # TODO ADD server intercept req
             return prompt_for_user_token_mod(username,
                                              scope,
                                              client_id=client_id,
@@ -239,7 +247,7 @@ def get_token():
     BEGIN Main Method
 '''
 
-#TODO add args
+# TODO add args
 try:
     token = get_token()
 
